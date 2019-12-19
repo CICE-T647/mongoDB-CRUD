@@ -1,51 +1,45 @@
-
 const Express = require("express");
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
 
 const router = Express.Router();
 const User = require("../../models/User");
 
-
+router.get("/", (req, res) => {
+  res.render("signup");
+});
 router.post("/", async (req, res) => {
+  const { email, password, name, role } = req.body;
 
-    const { email, password, name, role } = req.body
+  try {
+    const user = await User.findOne({ email });
 
-    try{
+    if (user) return res.status(409).json({ message: "El usuario ya existe." });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Hubo un problema" });
+  }
 
-        const user = await User.findOne({ email })
+  const saltRounds = 10;
 
-        if (user) return res.status( 409 ).json({ message: "El usuario ya existe." })
+  const salt = bcrypt.genSaltSync(saltRounds);
 
-    } catch(error){
-        console.log(error)
-        return res.status(500).json({ message: "Hubo un problema" })
-    }
+  const hashPass = bcrypt.hashSync(password, salt);
 
-    const saltRounds = 10;
+  const user = new User({
+    email,
+    password: hashPass,
+    role,
+    name
+  });
 
-    const salt = bcrypt.genSaltSync(saltRounds)
+  try {
+    await user.save();
 
-    const hashPass = bcrypt.hashSync( password, salt )
+    res.redirect("/beers/all");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Hubo un problema" });
+  }
+});
 
-    const user = new User({
-        email,
-        password: hashPass,
-        role,
-        name
-    })
-
-    try{
-
-        await user.save()
-
-     res.status(200).json({ message: "Usuario creado correctamente", user })
-
-    } catch(error){
-        console.log(error)
-        res.status(500).json({ message: "Hubo un problema" })
-    }
-
-})
-
-
-module.exports = router
+module.exports = router;

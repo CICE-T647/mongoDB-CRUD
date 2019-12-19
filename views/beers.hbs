@@ -1,0 +1,14 @@
+<div class="card-columns">
+    {{#each beers}}
+
+    <div class="card d-flex align-items-center">
+        <img class="card-img-top image-beer" src="{{this.image_url}}" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{this.name}}</h5>
+            <p class="card-text">{{this.description}}</p>
+        </div>
+        <a class="btn btn-primary" href="/beers/details/{{this.id}}">Ver más</a>
+    </div>
+
+    {{/each}}
+</div>

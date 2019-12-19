@@ -34,6 +34,7 @@ app.use("/users", require("./routes/user"));
 app.use("/auth", require("./routes/auth"));
 app.use("/userAccess", require("./routes/userAccess"));
 app.use("/adminAccess", require("./routes/adminAccess"));
+app.use("/beers", require("./routes/beers"));
 
 mongoose
   .connect(`mongodb://localhost:${DB_PORT}/app`, {
